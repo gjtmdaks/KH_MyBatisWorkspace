@@ -26,3 +26,5 @@ create sequence seq_student_no;
 create synonym emp for kh.employee;
 create synonym dept for kh.department;
 create synonym job for kh.job;
+
+SELECT * FROM STUDENT;
