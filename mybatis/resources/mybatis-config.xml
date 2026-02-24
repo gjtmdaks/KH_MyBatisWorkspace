@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 
+	DTD : 현재 XML의 태그들이 MYBATIS에서 지정한 태그형식을 제대로 사용하고 있는지
+	검사해주는 유효성검사 파일
+ -->
+ 
+<configuration>
+
+  <!-- 
+  	  properties
+  	   - 환경변수 및 전역변수들을 모아두는 태그
+   -->
+  <properties resource="driver.properties"></properties>
+  
+  <!-- 
+  	  settings
+  	   - MyBatis구동시 사용할 설정정보 등록 영역
+  	   - MyBatis에서 자동매핑기능에 사용되는 옵션
+  	   USER_ID형식의 칼럼을 userId로 변경하는 역할을 한다
+   -->
+  <settings>
+      <setting name="mapUnderscoreToCamelCase" value="true"/>
+      <!-- USER_ID -> userId / Underscore와 CamelCase를 변환(java <-> oracle) 변수이름 변환 -->
+  </settings>
+
+  <!-- 
+  	  environments
+  	   - MyBatis로 연동할 DB의 정보들을 등록하는 영역
+   -->
+  <environments default="development">
+    <environment id="development">
+    
+      <!-- 
+      	  transactionManager
+      	   - DB서버의 트랜잭션 관리를 자동으로 수행할지, 개발자가 직접 관리할지를 지정하는 속성.
+      	   - TYPE="JDBC" -> 개발자가 관리
+      	   - TYPE="MANAGED" -> 프레임워크에게 관리 위임.
+       -->
+      <transactionManager type="JDBC"/>
+      
+      <!-- 
+      	  dataSource
+      	   - TYPE=POOLED : 커넥션풀 사용
+      	   - TYPE=UNPOOLED : 커넥션풀 미사용
+       -->
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+  
+  <!-- 
+  	  mapper
+  	   - 실제 실행할 Mapper파일들을 등록하는 영역
+  	   - mapper파일의 각 태그들은 MappedState로 변환되어 MyBatis에 의해 관리된다.
+   -->
+  <mappers>
+    <mapper resource="/mapper/student/student-mapper.xml"/>
+  </mappers>
+</configuration>
