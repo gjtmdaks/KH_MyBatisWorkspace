@@ -22,9 +22,15 @@
   	   USER_ID형식의 칼럼을 userId로 변경하는 역할을 한다
    -->
   <settings>
-      <setting name="mapUnderscoreToCamelCase" value="true"/>
-      <!-- USER_ID -> userId / Underscore와 CamelCase를 변환(java <-> oracle) 변수이름 변환 -->
+  	<setting name="mapUnderscoreToCamelCase" value="true"/>
+    <!-- USER_ID -> userId / Underscore와 CamelCase를 변환(java <-> oracle) 변수이름 변환 -->
   </settings>
+  
+  <!-- 별칭 설정 -->
+  <typeAliases>
+  	<typeAlias type="com.kh.mybatis.student.service.model.vo.Student"
+  				alias="student" />
+  </typeAliases>
 
   <!-- 
   	  environments
@@ -62,5 +68,6 @@
    -->
   <mappers>
     <mapper resource="/mapper/student/student-mapper.xml"/>
+    <mapper resource="/mapper/emp/emp-mapper.xml"/>
   </mappers>
 </configuration>

@@ -3,8 +3,103 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="student">
+
+	<!-- 
+		mapper namespace
+		 - mapper파일의 고유한 별칭
+		 - 다른 mapper파일에 동일한 값이 존재하는 경우 에러
+		 
+		mapper파일에서 사용 가능한 태그들
+		 1. 쿼리문과 관련된 태그
+		  - DML
+		   1) <insert id="각 쿼리문 식별자" parameterType="전달받은 데이터의 타입"></insert>
+		   2) <update></update>
+		   3) <delete></delete>
+		   
+		  - DQL
+		   <select id="식별자" parameterType="자바클래스"
+		   resultType="조회결과를 자동매핑할 자바타입"
+		   resultMap="조회결과를 뽑아서 매핑할 resultMap의 id값">
+		   </select>
+		   
+		  - DQL문에서는 resultType이나 resultMap중 하나는 필수로 기술
+		  - DML문은 처리한 행의 갯수를 반환하기 때문에 반환타입 설정이 필수가 아니다.
+		  - 쿼리문을 실행하는데 필요한 데이터를 바인딩 할때는 #{ 필드명(VO), KEY값(MAP), 변수명(기본자료형) }를 사용
+		    하거나 ${ 필드명, 변수명, key값 }
+		 
+		 2. resultMap태그
+		  - ResultSet으로 조회된 칼럼값을 하나씩 뽑아서 내가 지정한 vo클래스의 각 필드에
+		    직접 데이터를 매핑하는 태그.
+		    
+		    - 기본생성자 호출 후, 각 태그에 저장된 property의 setter메서드를 호출하여 데이터 바인딩
+		    <resultMap id="식별자" type="반환타입">
+		    	<id column="db컬럼" property="필드명" />
+		    	<result column="db컬럼" property="필드명" />
+		    	...
+		    	<collection property="필드명" resultMap="식별자" />
+		    	<association property="필드명" resultMap="식별자" />
+		    </resultMap>
+		    
+		    - 생성자방식의 데이터 바인딩
+		    <resultMap id="..." type="...">
+		    	<constructor>
+		    		<idArg />
+		    		<arg />
+		    		...
+		    	</constructor>
+		    </resultMap>
+	 -->
+	 <!-- config에서 별칭 설정 안하면 전체 다 적어야 함 -->
 	<insert id="insertStudent" parameterType="com.kh.mybatis.student.service.model.vo.Student">
 		INSERT INTO STUDENT(NO, NAME, TEL)
 		VALUES(SEQ_STUDENT_NO.NEXTVAL, #{name}, #{tel})
 	</insert>
+	<insert id="insertStudentMap" parameterType="HashMap">
+		INSERT INTO STUDENT(NO, NAME, TEL)
+		VALUES(SEQ_STUDENT_NO.NEXTVAL, #{name}, #{tel})
+	</insert>
+	
+	<select id="selectStudentCount" resultType="int">
+		SELECT COUNT(*)
+		FROM STUDENT
+	</select>
+	<!-- 
+		resultSet 자동으로 VO클래스로 매핑
+		1. 조회한 칼럼명과 동일한 이르므이 필드의 setter메서드를 호출하여 값을 대입
+		2. 자동형변환처리
+		   varchar2, char -> String
+		   number -> int/double
+		   date -> java.util.Date
+		
+		config에서 별칭 설정하면 그 별칭으로 작성해도 인식됨
+	 -->
+	<select id="selectStudent" parameterType="int" resultType="student">
+		SELECT NO, NAME, TEL, REG_DATE as "regDate"
+		FROM STUDENT
+		WHERE NO = #{no}
+	</select>
+	
+	<update id="updateStudent" parameterType="student">
+		UPDATE STUDENT
+		SET NAME = #{name},
+			TEL = #{tel}
+		WHERE NO = #{no}
+	</update>
+	
+	<select id="selectStudentList" resultMap="studentMap">
+		SELECT *
+		FROM STUDENT
+		ORDER BY NO DESC
+	</select>
+	<!-- 
+		type의 기본생성자 호출 후, id와 result태그에 적힌 property의 setter
+		메서드를 하나하나 호출하여 바인딩해준다.
+		단, column의 이름과, property의 이름이 동일하다면 생략해도 자동으로 바인딩해준다.
+	 -->
+	<resultMap type="student" id="studentMap">
+		<id column="NO" property="no" />
+		<result column="NAME" property="name" />
+		<result column="TEL" property="tel" />
+		<result column="REG_DATE" property="regDate" />
+	</resultMap>
 </mapper>
